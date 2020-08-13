@@ -3,29 +3,11 @@ const express = require("express");
 const app = express();
 const port = process.env.port || 8000;
 var data = require('./data');
-var router = express.Router();
 
 
-router.get("/", function(req, res, next) {
-    res.render("login", {
-    });
-});
-
-router.post("/", function(req, res, next) {
-    var id = req.body.id;
-    var pw = req.body.pw;
-
-    if(id == "test" && pw == "1234") {
-        res.render("loginSuccess");
-    }
-    else {
-        res.render("loginFail");
-    }
-});
-
-module.exports = router;
-
-
+app.get('/', function(req, res){
+  res.send('Hello world');
+})
 
   app.get('/api/classes', function (request, response) {
     if (request.query.limit >= 0) {
