@@ -3,40 +3,6 @@ const express = require("express");
 const app = express();
 const port = process.env.port || 8000;
 var data = require('./data');
-const session = require('express-session');
-var bodyparser = require("body-parser");
-var User = require('../models/User');
-var mongoose = require("mongoose");
-var db = require("../mysetup/myurl").myurl;
-
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
-
-mongoose
-  .connect(db)
-  .then(() => {
-    console.log("Database is connected");
-  })
-  .catch(err => {
-    console.log("Error is ", err.message);
-  });
-
-
-app.use(passport.initialize());
-
-require("./strategies/jsonwtStrategy")(passport);
-
-app.get("/", (req, res) => {
-  res.status(200).send(`Hi Welcome to the Login and Signup API`);
-});
-
-const profile = require("./routes/User");
-app.use("/api", profile);
-
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
-
 
 
 
@@ -80,5 +46,14 @@ app.listen(port, () => {
       });
 
 
+      app.get("/", (req, res) => {
+      });
+      
+      app.listen(port, err => {
+        if (err) {
+          return console.log("ERROR", err);
+        }
+        console.log(`Listening on port ${port}`);
+      });
 
 
