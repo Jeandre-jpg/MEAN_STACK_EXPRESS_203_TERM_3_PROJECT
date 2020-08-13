@@ -3,6 +3,21 @@ const express = require("express");
 const app = express();
 const port = process.env.port || 8000;
 var data = require('./data');
+var authenticator = require('./authenticator');
+var logger = require('./logger');
+
+var urlpath = path.join(__dirname, '../frontend/build');
+
+app.use(logger)
+
+app.use(express.static(urlpath))
+
+app.use(authenticator);
+
+app.param('name', function (request, response, next) {
+  request.lowerName = request.params.name.toLowerCase();
+  next();
+});
 
 
 app.get('/', function(req, res){
@@ -46,7 +61,14 @@ app.get('/', function(req, res){
       });
 
 
-      app.get("/", (req, res) => {
+      app.get("/home", (req, res) => {
+        res.redirect(301, '/')
+      });
+
+      app.post("/api/login", (req, res) => {
+       var loginDetails = req.body
+       console.log(loginDetails)
+       res.json({token: 'Some token here if login successful'})
       });
       
       app.listen(port, err => {
