@@ -70,6 +70,10 @@ app.get('/', function(req, res){
        console.log(loginDetails)
        res.json({token: 'Some token here if login successful'})
       });
+
+      app.get('api/protected', authenticator, (req, res) =>{
+
+      })
       
       app.listen(port, err => {
         if (err) {
