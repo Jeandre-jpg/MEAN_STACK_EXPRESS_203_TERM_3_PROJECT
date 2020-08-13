@@ -3,99 +3,44 @@ const express = require("express");
 const app = express();
 const port = process.env.port || 8000;
 var data = require('./data');
-var learner = require('./data');
+const session = require('express-session');
+var bodyparser = require("body-parser");
+var User = require('../models/User');
+var mongoose = require("mongoose");
+var db = require("../mysetup/myurl").myurl;
+
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
+
+mongoose
+  .connect(db)
+  .then(() => {
+    console.log("Database is connected");
+  })
+  .catch(err => {
+    console.log("Error is ", err.message);
+  });
 
 
-app.get('/', function(req, res){
-  res.send('Hello world');
-})
+app.use(passport.initialize());
+
+require("./strategies/jsonwtStrategy")(passport);
+
+app.get("/", (req, res) => {
+  res.status(200).send(`Hi Welcome to the Login and Signup API`);
+});
+
+const profile = require("./routes/User");
+app.use("/api", profile);
+
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
 
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
 
-const express = require('express')
-const app = express()
-const bcrypt = require('bcrypt')
-const passport = require('passport')
-const flash = require('express-flash')
-const session = require('express-session')
-const methodOverride = require('method-override')
 
-const initializePassport = require('./passport-config')
-initializePassport(
-  passport,
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id)
-)
 
-const users = []
-
-app.set('view-engine', 'ejs')
-app.use(express.urlencoded({ extended: false }))
-app.use(flash())
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(methodOverride('_method'))
-
-app.get('/', checkAuthenticated, (req, res) => {
-  res.render('index.ejs', { name: req.user.name })
-})
-
-app.get('/login', checkNotAuthenticated, (req, res) => {
-  res.render('login.ejs')
-})
-
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}))
-
-app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs')
-})
-
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword
-    })
-    res.redirect('/login')
-  } catch {
-    res.redirect('/register')
-  }
-})
-
-app.delete('/logout', (req, res) => {
-  req.logOut()
-  res.redirect('/login')
-})
-
-function checkAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-
-  res.redirect('/login')
-}
-
-function checkNotAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return res.redirect('/')
-  }
-  next()
-}
 
 
   app.get('/api/classes', function (request, response) {
@@ -137,12 +82,3 @@ function checkNotAuthenticated(req, res, next) {
 
 
 
-app.get("/", (req, res) => {
-});
-
-app.listen(port, err => {
-  if (err) {
-    return console.log("ERROR", err);
-  }
-  console.log(`Listening on port ${port}`);
-});
