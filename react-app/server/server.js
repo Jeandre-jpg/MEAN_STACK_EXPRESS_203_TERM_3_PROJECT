@@ -6,7 +6,7 @@ var port = 8000
 var cors = require('cors')
 var authenticator = require('./authenticator');
 var logger = require('../server/loger')
-var data = require('./data')
+var data = require('../server/data')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 const jwt = require("jsonwebtoken")
@@ -19,10 +19,6 @@ var corsOptions = {
 
 app.use(express.static(path.join(__dirname, "..", "build")));
 app.use(express.static("public"));
-
-app.use((req, res, next) => {
-  res.sendFile(path.join(__dirname, "..", "build", "./server/public/index.html"));
-});
 
 
 var urlpath = path.join(__dirname, './server/public/index.html')
@@ -43,7 +39,7 @@ app.param('name', function (request, response, next) {
 });
 
 
-app.get('/api/classes', function (req, res) {
+app.get('/api/classes', function (request, response) {
   if (request.query.limit >= 0) {
   response.json(data.classes.slice(0, request.query.limit));
   } else {
@@ -51,16 +47,27 @@ app.get('/api/classes', function (req, res) {
   }
   });
 
-app.get('/api/categories/:name/exercises', function (request, response) {
-  var results = [];
-  // var lowerName = request.params.name.toLowerCase();
-  for (var i = 0; i < data.exercises.length; i++) {
-    if (data.exercises[i].category === request.lowerName) {
-      results.push(data.exercises[i]);
+  app.get('/api/teachers', function (request, response) {
+    if (request.query.limit >= 0) {
+    response.json(data.teachers.slice(0, request.query.limit));
+    } else {
+    response.json(data.teachers);
     }
-  }
-  response.json(results);
-});
+    });
+
+    app.get('/api/teachers/:id', function (request, response) {
+      var teacher = null;
+      var lowerName = request.params.id.toLowerCase();
+      for (var i = 0; i < data.teachers.length; i++) {
+      if (data.teachers[i].id.toLowerCase() === lowerName) {
+        teacher = data.teachers[i];
+      response.json(data.teachers[i]);
+      }
+      }
+      if (teacher == null) {
+      response.status(404).json("No teachers named '" + lowerName + "'found.");
+      }
+      });
 
 
 app.get('/home', (req, res) => {
