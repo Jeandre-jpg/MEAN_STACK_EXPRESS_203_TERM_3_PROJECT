@@ -76,6 +76,35 @@ app.get('/api/teachers/:id', function (req, res) {
         res.status(404).json("No class with id '" + id + "' found.");
     }
 });
+app.get('/api/classes/:name/teachers', function (request, response) {
+  var results = [];
+  var lowerName = request.params.name.toLowerCase();
+  for (var i = 0; i < data.teachers.length; i++) {
+  if (data.teachers[i].classes === lowerName) {
+  results.push(data.teachers[i]);
+  }
+  }
+  response.json(results);
+  });
+
+
+app.get('/api/classes/:id', function (req, res) {
+    var id = req.params.id;
+    var classId = null;
+    for (var i = 0; i < data.classes.length; i++) {
+        if (data.classes[i].id === parseInt(id)) {
+            classId = data.classes[i];
+            res.json(classId);
+        }
+    }
+    if (classId == null) {
+        res.status(404).json("No class with id '" + id + "' found.");
+    }
+});
+
+
+
+
 
 
 
