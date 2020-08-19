@@ -13,7 +13,7 @@ export default function Login() {
     fetch("http://localhost:8000/api/login", {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUnVhbiIsImlkIjoiMTIzMzQ1NTQiLCJpYXQiOjE1OTc2Njg5OTR9.iZU3sUPih1GhYm5M4d8EklJDHFoO2Hoardn6QI6GnKU'
+        'Authorization': 'Bearer https://jwt.io/#debugger-io?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyMzQ1Njc4OTAsIm5hbWUiOiJKZWFuZHLDqSBEZSBWaWxsaWVycyIsImlkIjoiMTkwMDI1Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.zGMcJJfbk9zoLrHs6PprMOIYbzHufrQ-MFhGPl83n3Y'
         // 'Content-Type': 'application/x-www-form-urlencoded',
       },
     })
