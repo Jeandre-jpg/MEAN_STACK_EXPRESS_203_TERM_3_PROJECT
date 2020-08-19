@@ -21,6 +21,7 @@ app.use((req, res, next) => {
 
 
 
+
 app.on('stormpath.ready', function () {
   app.listen(8000, 'localhost', function (err) {
     if (err) {
