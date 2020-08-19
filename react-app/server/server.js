@@ -64,18 +64,18 @@ app.get('/api/classes', function (request, response) {
 
 
 app.get('/api/teachers/:id', function (req, res) {
-  var teacher = null;
-  var id = req.params.id;
-  for (var i = 0; i < data.teachers.length; i++) {
-  if (data.teachers[i].id === parseInt(id)) {
-    teacher = data.teachers[i];
-  response.json(teacher);
-  }
-  }
-  if (teacher == null) {
-  res.status(404).json("No teacher with id '" + id + "' found.");
-  }
-  });
+    var id = req.params.id;
+    var teacherId = null;
+    for (var i = 0; i < data.teachers.length; i++) {
+        if (data.teachers[i].id === parseInt(id)) {
+          teacherId = data.teachers[i];
+            res.json(teacherId);
+        }
+    }
+    if (teacherId == null) {
+        res.status(404).json("No class with id '" + id + "' found.");
+    }
+});
 
 
 
