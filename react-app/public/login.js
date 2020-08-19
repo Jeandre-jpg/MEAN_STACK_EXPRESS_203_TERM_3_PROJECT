@@ -6,22 +6,18 @@ export default function Login() {
   const [password, setPassword] = useState()
 
   const submitForm = (e) => {
-    // get the credentials
     console.log("Submit")
     console.log("UserName", name)
     console.log("Password", password)
     fetch("http://localhost:8000/api/login", {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer https://jwt.io/#debugger-io?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyMzQ1Njc4OTAsIm5hbWUiOiJKZWFuZHLDqSBEZSBWaWxsaWVycyIsImlkIjoiMTkwMDI1Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.zGMcJJfbk9zoLrHs6PprMOIYbzHufrQ-MFhGPl83n3Y'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer J0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEyMzQ1Njc4OTAsIm5hbWUiOiJKZWFuZHLDqSBEZSBWaWxsaWVycyIsImlkIjoiMTkwMDI1Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.zGMcJJfbk9zoLrHs6PprMOIYbzHufrQ-MFhGPl83n3Y'
       },
     })
       .then(response => response.json())
       .then(data => console.log(data))
 
-
-    // make request to our server
   }
   const onNameChange = (e) => {
     console.log(e.target.value)
