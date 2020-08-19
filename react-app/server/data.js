@@ -77,17 +77,17 @@ var slots = [
 ];
 
 var teachers = [
-    {id: 01, name: "Mr Hunt", email: "hunt@highschool.com", password:"1234", classes: [1,2,11,12,21,22]},
-    {id: 02, name: "Mr Mclaughlin", email: "mclaughlin@highschool.com", password:"2345", classes: [6,7,26,27]},
-    {id: 03, name: "Ms Berger", email: "berger@highschool.com", password:"3456", classes: [3,4,13,14,23]},
-    {id: 04, name: "Ms Murray", email: "murray@highschool.com", password:"4567", classes: [8,9,29,30]},
-    {id: 05, name: "Mr Simpson", email: "simpson@highschool.com", password:"5678", classes: [5,15,25,30]}
+    {id: 1, name: "Mr Hunt", email: "hunt@highschool.com", password:"1234", classes: [1,2,11,12,21,22]},
+    {id: 2, name: "Mr Mclaughlin", email: "mclaughlin@highschool.com", password:"2345", classes: [6,7,26,27]},
+    {id: 3, name: "Ms Berger", email: "berger@highschool.com", password:"3456", classes: [3,4,13,14,23]},
+    {id: 4, name: "Ms Murray", email: "murray@highschool.com", password:"4567", classes: [8,9,29,30]},
+    {id: 5, name: "Mr Simpson", email: "simpson@highschool.com", password:"5678", classes: [5,15,25,30]}
 ];
 
 var learners = [
-    {id: 01, name: "Ian Reid", classes: [1,3,5,6,7,9]},
-    {id: 02, name: "Lynne Brock", classes: [12, 13, 15, 16, 18, 19]},
-    {id: 03, name: "Jeffery Medina", classes: [21, 24, 25, 27, 28, 30]}
+    {id: 1, name: "Ian Reid", classes: [1,3,5,6,7,9]},
+    {id: 2, name: "Lynne Brock", classes: [12, 13, 15, 16, 18, 19]},
+    {id: 3, name: "Jeffery Medina", classes: [21, 24, 25, 27, 28, 30]}
 ];
 
 module.exports = {classes: classes, slots: slots, teachers: teachers, learners: learners};

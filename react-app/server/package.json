@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "express-stormpath": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.0",
     "nodemon": "^2.0.4",
     "stormpath": "^0.20.1"
   }
