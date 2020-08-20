@@ -227,7 +227,7 @@ router.get('/home', (req, res) => {
   res.redirect(301, '/')
 })
 
-router.post('./public/login', (req, res) => {
+router.post('../public/login', (req, res) => {
   var loginDetails = req.body
   console.log(loginDetails)
 
