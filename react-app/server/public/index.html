@@ -6,10 +6,28 @@
     <title>Express App</title>
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
-  <body>
-    <h1>Hello world</h1>
-    <!-- <button type="button" class="btn">Display today's date</button> -->
-    <div class="date"></div>
+  <body style="background-image: url(./css/pexels-henry-&-co-2341290.jpg); margin-left: 42%;">
+    <img src="./css/teacher.png" style="width: 5vw; margin-left: 9%;  margin-top: 7vw;">
+    <h1 style=" margin-left: 6%; margin-top: 2vw;">Welcome</h1>
+    <h2 style=" margin-left: 6%;">Please log in</h2>
+    <button type="button" class="btn"  style=" margin-left: 6%;">Display today's date</button>
+    <div class="date"  style=" margin-top: 6%; margin-left: -7%;"></div>
+    <div class="login-container">
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="panel-heading" style="margin-left: 11%;"><h4>Login:</h4></div>
+    <form action="/login_user/" method="post">
+      <div class="form-group">
+        <input class="form-control" type="email" name="loginId" aria-describedby="emailHelp" placeholder="Enter email" style="margin-left: -6%;"/>
+        <input class="form-control" type="password" name="password" placeholder="password" style="margin-left: 6%;"/>
+        <input class="btn btn-primary" type="submit" value="Submit"/>
+      </div>
+    </form>
+  </div>
+
+</div>
+</div>
+   
     <script src="/js/script.js"></script>
   </body>
 </html>

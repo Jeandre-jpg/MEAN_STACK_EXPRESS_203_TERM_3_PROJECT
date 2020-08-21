@@ -7,3 +7,13 @@ body {
     font-size: inherit;
     margin-bottom: 10px;
   }
+
+  .login-container{
+  width:50%;
+  margin:0 auto;
+  padding:50px;
+  margin-top:30px;
+}
+input{
+  margin-bottom:10px;
+}

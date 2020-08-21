@@ -2,7 +2,7 @@ var path = require('path')
 require('dotenv').config()
 var express = require('express')
 var app = express()
-var port = 8000
+var port = 8080
 var cors = require('cors')
 var authenticator = require('./authenticator')
 var logger = require('../server/loger')
@@ -12,19 +12,21 @@ var cookieParser = require('cookie-parser')
 const jwt = require("jsonwebtoken")
 var router = express.Router()
 app.use('/api', router)
+app.use(express.json())
+const axios = require('axios').default
 
 
 var corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200 
 }
-
+// app.get('/', (req, res) => res.download('./server/src/MEAN-ExpressJS-203-Brief-2020.pdf'));
 
 app.use(express.static(path.join(__dirname, "..", "build")));
 app.use(express.static("public"));
 
 
-var urlpath = path.join(__dirname, './server/public/index.html')
+var urlpath = path.join(__dirname, './server/public/')
 // app.use(cors(corsOptions))
 //1.
 app.use(logger)
@@ -41,9 +43,7 @@ app.param('name', function (request, response, next) {
   next();
 });
 
-
-
-//A list of all the classes
+// //A list of all the classes
 app.get('/api/classes', function (request, response) {
   if (request.query.limit >= 0) {
   response.json(data.classes.slice(0, request.query.limit));
@@ -53,7 +53,7 @@ app.get('/api/classes', function (request, response) {
   });
 
 
-  //A list of all the teachers
+  //   //A list of all the teachers
   app.get('/api/teachers', function (request, response) {
     if (request.query.limit >= 0) {
     response.json(data.teachers.slice(0, request.query.limit));
@@ -63,7 +63,8 @@ app.get('/api/classes', function (request, response) {
     });
 
 
-//A list of all the subjects
+
+// //A list of all the subjects
     app.get('/api/classes/:subject', function (req, res) {
       var subject = req.params.subject;
       var classesId = null;
@@ -78,148 +79,131 @@ app.get('/api/classes', function (request, response) {
       }
   });
 
-//A list of all the teachers by id
-app.get('/api/teachers/:id', function (req, res) {
-    var id = req.params.id;
-    var teacherId = null;
-    for (var i = 0; i < data.teachers.length; i++) {
-        if (data.teachers[i].id === parseInt(id)) {
-          teacherId = data.teachers[i];
-            res.json(teacherId);
-        }
-    }
-    if (teacherId == null) {
-        res.status(404).json("No class with id '" + id + "' found.");
-    }
-});
 
 
 
-// app.get('/api/classes/:name/teachers', function (request, response) {
-//   var results = [];
-//   var lowerName = request.params.name.toLowerCase();
-//   for (var i = 0; i < data.teachers.length; i++) {
-//   if (data.teachers[i].classes === lowerName) {
-//   results.push(data.teachers[i]);
-//   }
-//   }
-//   response.json(results);
-//   });
 
+// //A list of classes taught by a particular teacher
+app.get('/api/teachers/:id/classes', (req, res) => {
+  var teacherName = [];
+  var classId = [];
+  var className = [];
 
-//A list of classes taught by a particular teacher
-router.get('api/teachers/:name', (req, res) => {
-  let teacherClass = [];
-  let myClasses = [];
+  var id = req.params.id;
 
-  for(let i = 0; i < data.teachers.length; i++) {
-    if (data.teachers[i].name.toUpperCase() === req.params.name.toUpperCase()) {
-      teacherClass.push(data.teachers[i].classes);
+  for (var i = 0; i < data.teachers.length; i++) {
+    if (data.teachers[i].id === parseInt(id)) {
+      teacherName.push(data.teachers[i].name);
+      for (var j = 0; j < data.teachers[i].classes.length; j++){
+        classId.push(data.teachers[i].classes[j])
     }
   }
-
-  let j = 0;
-
-  for (let i = 0; i < data.classes.length; i++) {
-    if (data.classes[i].id === teacherClass[0][j]) {
-      myClasses.push (`${data.classes[i].subject} group ${data.classes[i].group}`);
-      ++j;
-    }
-  }
-
-  let teacher = {
-    teacher: req.params.name,
-    classes: myClasses,
-  };
-
-  res.json(teacher);
+}
 
 
-});
-
-//A list of classes taken by a particular learner
-router.get('/api/learners/:name', (req, res) => {
-  let learnerClass = [];
-  let theirClasses = [];
-
-  for(let i = 0; i < data.learners.length; i++) {
-    if (data.learners[i].name.toUpperCase() === req.params.name.toUpperCase()) {
-      learnerClass.push(data.learners[i].classes);
-    }
-  }
-
-  let j = 0;
-
-  for (let i = 0; i < data.classes.length; i++) {
-    if (data.classes[i].id === learnerClass[0][j]) {
-      theirClasses.push (`${data.classes[i].subject} group ${data.classes[i].group}`);
-      ++j;
-    }
-  }
-
-  let learner = {
-    learner: req.params.name,
-    classes: theirClasses,
-  };
-
-  res.json(learner);
-
-
-});
-
-// app.get('api/teachers/:id/classes', (req, res) => {
-//   var teacherName = '';
-//   var teacherNumberClasses = [];
-//   var teacherSubjectNames = [];
-//   var id = req.params.id;
-
-//   for(var i = 0; i < data.teachers.length; i++) {
-//     if (data.teachers[i] === parseInt(id)) {
-//       teacherNumberClasses = data.teachers[i].classes;
-//       teacherName = data.teachers[i].name;
-//     }
-//   }
-
-//   for(var i = 0; i < data.classes.length; i++) {
-//     if (teacherNumberClasses[i] === data.classes[i].id) {
-//       teacherSubjectNames.push(data.classes[i].subject); 
-//     }
-//   }
-
-//   res.json("Teacher with Id " + id + "is " + teacherName + "whom teaches " + teacherNumberClasses + "classes, named " + teacherSubjectNames)
-// });
-
-
-//A list of all the classes by id
-app.get('/api/classes/:id', function (req, res) {
-    var id = req.params.id;
-    var classId = null;
-    for (var i = 0; i < data.classes.length; i++) {
-        if (data.classes[i].id === parseInt(id)) {
-            classId = data.classes[i];
-            res.json(classId);
-        }
-    }
-    if (classId == null) {
-        res.status(404).json("No class with id '" + id + "' found.");
-    }
-});
-
-
-//A list of all the classes by id
-app.get('/api/classes/:classroom', function (req, res) {
-  var classroom = req.params.classroom;
-  var classroomId = null;
-  for (var i = 0; i < data.classes.length; i++) {
-      if (data.classes[i].classroom === req.params.classroom) {
-        classroomId = data.classes[i];
-          res.json(classroomId);
+for (var i = 0; i < classId.length; i++) {
+    for (var j = 0; j < data.classes.length; j++){
+        if (classId[i] == data.classes[j].id) {
+          className.push(data.classes[j].subject);
       }
-  }
-  if (classroomId == null) {
-      res.status(404).json("No class with classroom number '" + classroom + "' found.");
-  }
+    }
+}
+
+var results = {teacherName, className};
+res.json(results);
+
 });
+
+
+
+
+
+// //A list of classes that is being taken by a learner
+app.get('/api/learners/:id/classes', (req, res) => {
+  var learnerName = [];
+  var classId = [];
+  var className = [];
+
+  var id = req.params.id;
+
+  for (var i = 0; i < data.learners.length; i++) {
+    if (data.learners[i].id === parseInt(id)) {
+      learnerName.push(data.learners[i].name);
+      for (var j = 0; j < data.learners[i].classes.length; j++){
+        classId.push(data.learners[i].classes[j])
+    }
+  }
+}
+
+
+for (var i = 0; i < classId.length; i++) {
+    for (var j = 0; j < data.classes.length; j++){
+        if (classId[i] == data.classes[j].id) {
+          className.push(data.classes[j].subject);
+      }
+    }
+}
+
+var results = {learnerName, className};
+res.json(results);
+
+});
+
+
+
+//Details of a class
+app.get('/api/classes/:id/classes', (req, res) => {
+  var classRoomNumber = [];
+  var subjectName = [];
+  var slotNumber = [];
+  var studentName = [];
+  var teachName = [];
+  var detailsId = [];
+
+  var id = req.params.id;
+
+  for (var i = 0; i < data.classes.length; i++) {
+    if (data.classes[i].id === parseInt(id)) {
+        slotNumber.push(data.classes[i].slot);
+        subjectName.push(data.classes[i].subject[j])
+        classRoomNumber.push(data.classes[i].classroom[j])
+    }
+  }
+
+
+
+for (var i = 0; i < data.slotNumber.length; i++) {
+        if (data.slotNumber[i].slot == (parseInt(id))) {
+          classTime.push(data.slots[j].times);
+      }
+    }
+
+    for (var i = 0; i < data.teachName.length; i++) {
+      for (var j = 0; j < data.teachName.classes.length; j++){
+        detailsId.push(data.learners[i].classes[j])
+    }  if (data.teachName[i].className[j] == (parseInt(id))) {
+      teachName.push(data.teachName[i].name);
+  }
+    
+  }
+
+
+  for (var i = 0; i < data.studentName.length; i++) {
+    for (var j = 0; j < data.studentName.classes.length; j++){
+      detailsId.push(data.learners[i].classes[j])
+  }  if (data.studentName[i].className[j] == (parseInt(id))) {
+    studentName.push(data.studentName[i].name);
+}
+  
+}
+
+
+var results = {subjectName, classRoomNumber, teachName, studentName, slotNumber};
+res.json(results);
+
+});
+
+
 
 
 
@@ -227,18 +211,53 @@ router.get('/home', (req, res) => {
   res.redirect(301, '/')
 })
 
-router.post('../public/login', (req, res) => {
+router.post('/api/login', (req, res) => {
   var loginDetails = req.body
   console.log(loginDetails)
-
-  const token = jwt.sign({ "name": "Jeandré De Villiers", "id": "190025" }, process.env.ACCESS_TOKEN_SECRET)
-  res.cookie("token", token)
-  res.json({ token: token })
+  res.json(loginDetails)
 })
 
-router.post('/api/protected', authenticator, (req, res) => {
-  res.json(req.user)
+
+
+//   const token = jwt.sign({ "name": "Jeandré De Villiers", "id": "190025" }, process.env.ACCESS_TOKEN_SECRET)
+//   res.cookie("token", token)
+//   res.json({ token: token })
+// })
+
+// router.post('/api/protected', authenticator, (req, res) => {
+//   res.json(req.user)
+// })
+
+
+
+
+const posts = [
+  {
+    username: 'Kyle',
+    title: 'Post 1'
+  },
+  {
+    username: 'Jim',
+    title: 'Post 2'
+  }
+]
+
+app.get('/posts', authenticateToken, (req, res) => {
+  res.json(posts.filter(post => post.username === req.user.name))
 })
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    console.log(err)
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+}
 
 app.listen(port, () => {
   console.log(`server listening on port ${port}`)
