@@ -4,21 +4,16 @@ var express = require('express')
 var app = express()
 var port = 8080
 var cors = require('cors')
-var authenticator = require('./authenticator')
+var authenticator = require('../server/authenticator');
 var logger = require('../server/loger')
-var data = require('../server/data')
+var data = require('./data')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 const jwt = require("jsonwebtoken")
-var router = express.Router()
-app.use('/api', router)
-app.use(express.json())
-const axios = require('axios').default
-
 
 var corsOptions = {
   origin: '*',
-  optionsSuccessStatus: 200 
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 // app.get('/', (req, res) => res.download('./server/src/MEAN-ExpressJS-203-Brief-2020.pdf'));
 
@@ -42,6 +37,14 @@ app.param('name', function (request, response, next) {
   request.lowerName = request.params.name.toLowerCase();
   next();
 });
+
+// app.get('/', (req, res) => res.download('./server/src/MEAN-ExpressJS-203-Brief-2020.pdf'));
+
+// app.use(express.static(path.join(__dirname, "..", "build")));
+// app.use(express.static("public"));
+
+
+
 
 // //A list of all the classes
 app.get('/api/classes', function (request, response) {
@@ -158,47 +161,44 @@ app.get('/api/classes/:id/classes', (req, res) => {
   var slotNumber = [];
   var studentName = [];
   var teachName = [];
-  var detailsId = [];
+  var classTime = [];
 
   var id = req.params.id;
 
   for (var i = 0; i < data.classes.length; i++) {
     if (data.classes[i].id === parseInt(id)) {
         slotNumber.push(data.classes[i].slot);
-        subjectName.push(data.classes[i].subject[j])
-        classRoomNumber.push(data.classes[i].classroom[j])
+        subjectName.push(data.classes[i].subject)
+        classRoomNumber.push(data.classes[i].classroom)
     }
   }
 
 
 
-for (var i = 0; i < data.slotNumber.length; i++) {
-        if (data.slotNumber[i].slot == (parseInt(id))) {
-          classTime.push(data.slots[j].times);
+for (var i = 0; i < data.slots.length; i++) {
+        if (data.slots[i].slot == parseInt(slotNumber)) {
+          classTime.push(data.slots[i].times) ;
       }
     }
 
-    for (var i = 0; i < data.teachName.length; i++) {
-      for (var j = 0; j < data.teachName.classes.length; j++){
-        detailsId.push(data.learners[i].classes[j])
-    }  if (data.teachName[i].className[j] == (parseInt(id))) {
-      teachName.push(data.teachName[i].name);
+    for (var i = 0; i < data.teachers.length; i++){
+      for (var j = 0; j < data.teachers.classes.length; j++){
+      if (data.teachers[i].classes[j] == parseInt(id)){
+      teachName.push(data.teachers[i].name);
+      }
+    }
   }
     
+
+  for (var i = 0; i < data.learners.length; i++){
+    for (var j = 0; j < data.learners.classes.length; j++){
+    if (data.learners[i].classes[j] == parseInt(id)){
+      studentName.push(data.learners[i].name)
+    }
   }
-
-
-  for (var i = 0; i < data.studentName.length; i++) {
-    for (var j = 0; j < data.studentName.classes.length; j++){
-      detailsId.push(data.learners[i].classes[j])
-  }  if (data.studentName[i].className[j] == (parseInt(id))) {
-    studentName.push(data.studentName[i].name);
-}
-  
 }
 
-
-var results = {subjectName, classRoomNumber, teachName, studentName, slotNumber};
+var results = {subjectName, classRoomNumber, teachName, studentName, classTime};
 res.json(results);
 
 });
@@ -207,57 +207,30 @@ res.json(results);
 
 
 
-router.get('/home', (req, res) => {
+app.get('/home', (req, res) => {
   res.redirect(301, '/')
 })
 
-router.post('/api/login', (req, res) => {
+app.get('/public/classroom.html', (req, res) => {
+  let obj = { 1: 'one', 2: 'two', 3: 'three' }
+  res.render('index', { data: obj })
+})
+
+app.post('/api/login', (req, res) => {
   var loginDetails = req.body
   console.log(loginDetails)
-  res.json(loginDetails)
+  // Validate that the user exists in the database/datafile
+  // Decrypt password with bcrypt
+
+  // The regester rout will encrypt the password and the post into database
+  const token = jwt.sign({ "name": "Jeandré De Villiers", "id": "190025" }, process.env.ACCESS_TOKEN_SECRET)
+  res.cookie("token", token)
+  res.json({ token: token })
 })
 
-
-
-//   const token = jwt.sign({ "name": "Jeandré De Villiers", "id": "190025" }, process.env.ACCESS_TOKEN_SECRET)
-//   res.cookie("token", token)
-//   res.json({ token: token })
-// })
-
-// router.post('/api/protected', authenticator, (req, res) => {
-//   res.json(req.user)
-// })
-
-
-
-
-const posts = [
-  {
-    username: 'Kyle',
-    title: 'Post 1'
-  },
-  {
-    username: 'Jim',
-    title: 'Post 2'
-  }
-]
-
-app.get('/posts', authenticateToken, (req, res) => {
-  res.json(posts.filter(post => post.username === req.user.name))
+app.post('/api/protected', authenticator, (req, res) => {
+  res.json(req.user)
 })
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null) return res.sendStatus(401)
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    console.log(err)
-    if (err) return res.sendStatus(403)
-    req.user = user
-    next()
-  })
-}
 
 app.listen(port, () => {
   console.log(`server listening on port ${port}`)
